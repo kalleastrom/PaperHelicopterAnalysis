@@ -1,0 +1,32 @@
+function test(img) = H 
+
+%centre of mass
+img = [1 2 0; 3 4 0]
+m0=zeros(2,1);
+s = size(img);
+for i=1:s(1)
+    for j=1:s(2)
+    m0
+    [i;j]
+    m0 = m0 +[i;j]*img(i,j);
+    end
+end
+m1 =m0
+
+m0 = sum(sum(img))
+
+c = m1/m0
+
+%second moment
+A= []
+
+for i=1:s(1)
+    for j=1:s(2)
+    [(i-c(1))^2 (j-c(2))]
+    end
+end
+
+
+
+
+
