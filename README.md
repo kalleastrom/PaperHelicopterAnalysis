@@ -9,10 +9,10 @@ The code was developed in a project in mathematical modelling at Lund University
 ## Code
 
 * Download/Clone/Fork the repository
-** The project contains three folder
-** data - put the video files here, don't sync the data to github
-** tex - report
-** matlab - the code for the analysis goes here
+  * The project contains three folder
+  * data - put the video files here, don't sync the data to github
+  * tex - report
+  * matlab - the code for the analysis goes here
 * Download data and put it in the data folder
 * Start matlab and go to the matlab folder
 * Run main.m
