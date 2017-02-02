@@ -6,17 +6,6 @@ rotational velocity from video.
 
 The code was developed in a project in mathematical modelling at Lund University.
 
-## Data
-
-Example data for the system can be downloaded from
-[http://www.maths.lth.se/matematiklth/personal/kalle/PaperHelicopterData/data1.mov](http://www.maths.lth.se/matematiklth/personal/kalle/PaperHelicopterData/data1.mov)
-
-Briefly the datasets are:
-
-1.  data1.mov - first testfilm, filmed from above, extract rotational velocity
-
-![data1.mov](/tex/images/data1_cut.jpg "One frame from data1.mov")
-
 ## Code
 
 * Download/Clone/Fork the repository
@@ -28,3 +17,13 @@ Briefly the datasets are:
 * Start matlab and go to the matlab folder
 * Run main.m
 
+## Data
+
+Example data for the system can be downloaded from
+[http://www.maths.lth.se/matematiklth/personal/kalle/PaperHelicopterData/data1.mov](http://www.maths.lth.se/matematiklth/personal/kalle/PaperHelicopterData/data1.mov)
+
+Briefly the datasets are:
+
+1.  data1.mov - first testfilm, filmed from above, extract rotational velocity
+
+![data1.mov](/tex/images/data1_cut.jpg "One frame from data1.mov")
