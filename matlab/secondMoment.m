@@ -12,11 +12,11 @@ m0 = sum(sum(img));
 c = m1/m0;
 
 %Second moment
-A= zeros(2,2)
+A= zeros(2,2);
 for i=1:s(1)
     for j=1:s(2)
     A = A + [(j-c(1))^2 (i-c(2))*(j-c(1)); (i-c(2))*(j-c(1)) (i-c(2))^2] * img(i,j);
     end
 end
-H = A
+H = A;
 end
