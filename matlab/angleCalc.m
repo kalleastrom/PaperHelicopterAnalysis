@@ -8,7 +8,7 @@ img = im2double(im);
 [vals ind] = max(max(E));
 ev = V(:,ind);
 angle = atan(ev(2)/ev(1));
-a=normangle2(angle);
+a=angle;% a=normangle2(angle);
 direction = ev;
 
 end

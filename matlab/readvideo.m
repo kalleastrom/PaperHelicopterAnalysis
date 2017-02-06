@@ -1,4 +1,5 @@
-function [angular_freq] = readvideo(file,fps,startFrame,plotting)
+function [angularFreq] = readvideo(file,fps,startFrame,plotting,stop,...
+                                    cropx,cropy)
 %READVIDEO reads video of paper helicopter and calculates rotation
 %
 % INPUT
@@ -6,6 +7,13 @@ function [angular_freq] = readvideo(file,fps,startFrame,plotting)
 % fps   (integer)       :   Number of frames per second in video
 % startFrame (integer)  :   Cuts all frames up to this number
 % plotting (true/false) :   Enable/disable plotting feature
+% stop (true/false)     :   Determine whether the function should terminate
+%                           after angular frequency is determined
+% ------------  The following input arguments are optional  ---------------
+% cropx (double array)  :   Cropping of the video, given on the format
+%                           [firstpixel:lastpixel]
+% cropy (double array)  :   Cropping of the video, given on the format
+%                           [firstpixel:lastpixel]
 %
 % OUTPUT
 % angular_freq          :   Calculated value of angular frequency
@@ -13,12 +21,15 @@ function [angular_freq] = readvideo(file,fps,startFrame,plotting)
 % Created 2017-02-03 by
 % Olle Alvin, Jonathan Astermark, Julia H. Fovaeus, John Hellborg
 
+if nargin == 5
+    cropping = false;
+elseif nargin == 7
+    cropping = true;
+else
+    error('Invalid number of input arguments in readvideo')
+end
+        
 v = VideoReader(file);
-
-% startFrame = 50;
-% fps = 119;
-% 
-% v = VideoReader('../data/test_microrum.mp4');
 
 ctr = 1;
 fprintf('Discarding first %d frames.\n',startFrame-1)
@@ -26,20 +37,54 @@ while hasFrame(v) && ctr < startFrame
     frame = readFrame(v);
     ctr = ctr+1;
 end
-time = 0;
+if plotting
+   figure(1)
+   clf
+end
 timePerFrame = 1/fps;
+found = false;
+angularFreq = -Inf;
 while hasFrame(v)
     frame = readFrame(v);
-    croppedframe = frame(200:520,300:980,:);
+    if cropping
+        croppedframe = frame(cropx,cropy,:);
+    end
     grayimg = rgb2gray(croppedframe);
     T = (grayimg>180);
     [angle,c,vec] = angleCalc(T);
     % Save angle on first frame
     if ctr == startFrame
         startAngle = angle;
+        relAngle = 0;
+        time = 0;
+        timeSinceReset = 0;
+    else
+        relAnglePrev = relAngle;
+        relAngle = angle-startAngle;
+    end
+    % Half period completed when the relative angle crosses zero, but not
+    % by a fold-around
+    if ((relAngle > 0 && relAnglePrev < 0) ...
+             || (relAngle < 0 && relAnglePrev > 0)) ...
+            && abs(relAngle - relAnglePrev) < pi/4 ... % fold-around
+            % Alternative: add && ~found to only look for first value
+%         ctr
+        elapsedTime = timeSinceReset;
+        newFreq = pi/elapsedTime;
+        if newFreq > angularFreq % Keep only fastest rotation speed
+            angularFreq = newFreq;
+        end
+        found = true;
+        if stop
+            return
+        else
+            % Start new measurement
+            startAngle = angle;
+            relAngle = 0;
+            timeSinceReset = 0;
+        end
     end
     if plotting
-        figure(1)
 %     imshow(grayimg)
 %     imagesc(grayimg)
         colormap(gray)
@@ -58,17 +103,14 @@ while hasFrame(v)
 %         fprintf('Paused, press any button for next frame.\n')
         pause(0.05)
     end
-    % TODO: If full period completed, stop and calculate velocity
-%     angle-startAngle
-%     if angle <= startAngle && ctr ~= startFrame
-%         elapsedTime = time;
-%         angular_freq = 2*pi/elapsedTime;
-%         return
-%     end
     time = time + timePerFrame;
+    timeSinceReset = timeSinceReset + timePerFrame;
     ctr = ctr+1;
 end
 
-error(['Video ended before a value was calculated.\n',...
-      ' Consider reducing value of startFrame.'])
+if ~found
+    error(['Video ended before a value was calculated.\n',...
+        ' Consider reducing value of startFrame.'])
+end
+
 end
