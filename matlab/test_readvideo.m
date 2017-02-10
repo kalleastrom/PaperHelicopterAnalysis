@@ -5,7 +5,7 @@
 %
 clear all
 
-file = '..\..\..\top9.mp4'; % Videos should be in '../data/'
+file = '../data/top9.mp4'; % Videos should be in '../data/'
 %file = 'binarytest.avi'
 fps = 119; % Camera specific
 startFrame = 1;

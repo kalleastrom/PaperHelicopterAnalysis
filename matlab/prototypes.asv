@@ -1,0 +1,15 @@
+
+nbr_of_prototypes = 11;
+
+% Standard
+a = 4*ones(nbr_of_prototypes,1);
+b = 3.5*ones(nbr_of_prototypes,1);
+c = 2*ones(nbr_of_prototypes,1);
+d = 3*ones(nbr_of_prototypes,1);
+L = 13*ones(nbr_of_prototypes,1);
+
+% Changes
+b(2) = 4.5; % Model 2
+b(3) = 2.5; % Model 3
+a(4) = 5;   % Model 4
+a(5) = 3;   % Model 5
