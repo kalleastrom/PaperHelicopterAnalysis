@@ -23,9 +23,9 @@ toc;
 fprintf('Highest angular frequency: %f rad/s\n',angular_freq)
 
 angDiff = angleVec - circshift(angleVec,1); 
-figure
+figure(2)
 plot(angleVec)
-figure
+figure(3)
 rotSpeeds = normangle2(angDiff)*119
 plot(rotSpeeds, '*')
 
