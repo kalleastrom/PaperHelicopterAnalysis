@@ -11,7 +11,7 @@ fps = 119; % Camera specific
 startFrame = 1;
 %cropx = 300:520;
 %cropy = 300:980;
-%%
+
 plotting = true; % Toggle plotting
 stop = false;     % Toggle whether the script terminates immediately after
                  % an angular frequency is found

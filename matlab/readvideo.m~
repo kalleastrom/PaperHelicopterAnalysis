@@ -1,4 +1,4 @@
-function [angularFreq, angleVec] = readvideo(file,fps,startFrame,plotting,stop,...
+function [angularFreq] = readvideo(file,fps,startFrame,plotting,stop,...
                                     cropx,cropy)
 %READVIDEO reads video of paper helicopter and calculates rotation
 %
@@ -105,7 +105,7 @@ while hasFrame(v)
 %         fprintf('Paused, press any button for next frame.\n')
         pause(0.05)
     end
-    angleVec(ctr) = angle;
+    angle(fr
     time = time + timePerFrame;
     timeSinceReset = timeSinceReset + timePerFrame;
     ctr = ctr+1;

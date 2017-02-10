@@ -3,7 +3,7 @@ function [a,c,direction] = angleCalc(im)
 %corresponding to the largest eigen value to the second moment matrix.
 
 img = im2double(im);
-[H,c] = secondMoment(img);
+[H,c] = newSecondmoment(img);
 [V E] = eig(H);
 [vals ind] = max(max(E));
 ev = V(:,ind);
