@@ -115,5 +115,5 @@ if ~found
     error(['Video ended before a value was calculated.\n',...
         ' Consider reducing value of startFrame.'])
 end
-
+angleVec = angleVec';
 end

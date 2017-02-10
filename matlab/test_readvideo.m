@@ -5,13 +5,13 @@
 %
 clear all
 
-file = 'PaperHelicopterAnalysisreal/data/helicopter9top.mp4'; % Videos should be in '../data/'
+file = '..\..\..\top9.mp4'; % Videos should be in '../data/'
 %file = 'binarytest.avi'
 fps = 119; % Camera specific
 startFrame = 1;
 %cropx = 300:520;
 %cropy = 300:980;
-%%
+
 plotting = true; % Toggle plotting
 stop = false;     % Toggle whether the script terminates immediately after
                  % an angular frequency is found
@@ -21,3 +21,11 @@ tic;
 toc;
 
 fprintf('Highest angular frequency: %f rad/s\n',angular_freq)
+
+angDiff = angleVec - circshift(angleVec,1); 
+figure
+plot(angleVec)
+figure
+rotSpeeds = normangle2(angDiff)*119
+plot(rotSpeeds, '*')
+
