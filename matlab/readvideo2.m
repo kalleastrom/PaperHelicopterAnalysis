@@ -113,7 +113,7 @@ end
 
 angFreqs = normangle2(diff(relAngles))/timePerFrame;
 
-if plotting
+if false
     figure(2)
     clf
     plot(relAngles)
