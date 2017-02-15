@@ -1,4 +1,4 @@
-function [angularFreq,stdAngFreq,relAngles] ...
+function [angularFreq,stdAngFreq,angFreqs] ...
                      = readvideo2(file,fps,startFrame,endFrame,plotting,...
                                   cropx,cropy)
 %READVIDEO reads video of paper helicopter and calculates rotation
@@ -40,7 +40,8 @@ ctr = 1;
 % Discard all frames up to 'startFrame'
 fprintf('Discarding first %d frames.\n',startFrame-1)
 while hasFrame(v) && ctr < startFrame
-    readFrame(v);
+    frame = readFrame(v);
+    clear frame
     ctr = ctr+1;
 end
 
@@ -63,6 +64,7 @@ while hasFrame(v) && ctr <= endFrame
     end
     frame = rgb2gray(frame);
     T = (frame>180);
+    clear frame
     [angle,c,vec] = angleCalc(T);
     
     % Save angle on first frame, otherwise calculate relative angle
@@ -103,6 +105,7 @@ while hasFrame(v) && ctr <= endFrame
         title(['frame: ',num2str(ctr), ', t = ',...
                num2str(time),' s, relAngle: ',num2str(relAngle)])
         pause(0.01)
+%         pause
     end
     relAngles(ctr-startFrame+1) = relAngle;
 %     angleVec(ctr) = angle;
@@ -110,7 +113,7 @@ while hasFrame(v) && ctr <= endFrame
 %     timeSinceReset = timeSinceReset + timePerFrame;
     ctr = ctr+1;
 end
-
+clear v frame T 
 angFreqs = normangle2(diff(relAngles))/timePerFrame;
 
 if false
@@ -122,9 +125,13 @@ if false
 end
 figure(3)
 clf
-plot(angFreqs,'*')
+plot((startFrame+1):(ctr-1),angFreqs,'*')
+% ylim([30 60])
 title('Angular frequency per frame')
 ylabel('Angular frequency [rad/s]')
+xlabel('Frame')
+
+print -depsc plots/ang_freq.eps
 
 % Let the user pick the interval in which to calculate mean
 fprintf(['Set starting point for mean calculation by clicking in the ',...
