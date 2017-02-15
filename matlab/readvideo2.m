@@ -38,7 +38,7 @@ v = VideoReader(file);
 ctr = 1;
 
 % Discard all frames up to 'startFrame'
-fprintf('Discarding first %d frames.\n',startFrame-1)
+fprintf('Discarding first %d frames...\n',startFrame-1)
 while hasFrame(v) && ctr < startFrame
     frame = readFrame(v);
     clear frame
@@ -53,7 +53,7 @@ end
 
 % If possible, preallocate the array 'relAngles'
 if isfinite(endFrame)
-    relAngles = zeros(endFrame-startFrame+1);
+    relAngles = zeros(1,endFrame-startFrame+1);
 end
 
 timePerFrame = 1/fps;
@@ -64,6 +64,10 @@ while hasFrame(v) && ctr <= endFrame
     end
     frame = rgb2gray(frame);
     T = (frame>180);
+    if ~max(max(T)) % All pixels zero, i.e. no helicopter found at all
+        warning('Terminating video because helicopter was not found.')
+        break       % Step out of loop
+    end
     clear frame
     [angle,c,vec] = angleCalc(T);
     
@@ -102,7 +106,8 @@ while hasFrame(v) && ctr <= endFrame
         line([p1(1) p2(1)], [p1(2) p2(2)])
         line([p1(1) p3(1)], [p1(2) p3(2)])
         %%%%%%%%
-        title(['frame: ',num2str(ctr), ', t = ',...
+        title(['Helicopter number ', num2str(i), '\n',...
+               'frame: ',num2str(ctr), ', t = ',...
                num2str(time),' s, relAngle: ',num2str(relAngle)])
         pause(0.01)
 %         pause
@@ -130,26 +135,30 @@ plot((startFrame+1):(ctr-1),angFreqs,'*')
 title('Angular frequency per frame')
 ylabel('Angular frequency [rad/s]')
 xlabel('Frame')
+axis manual % freeze axis
 
 print -depsc plots/ang_freq.eps
 
 % Let the user pick the interval in which to calculate mean
 fprintf(['Set starting point for mean calculation by clicking in the ',...
          'plot.\n'])
-[startMean,~] = ginput(1);
-startMean = round(startMean);
-line([startMean startMean],ylim,'Color','k')
-endMean = -Inf;
-fprintf('Set end point for mean calculation by clicking in the plot.\n')
-while endMean < startMean
-    [endMean,~] = ginput(1);
-    endMean = round(endMean);
+startMeanIndex = -Inf;
+endMeanIndex = -Inf;
+while startMeanIndex < 0
+    [startMeanVal,~] = ginput(1);
+    startMeanIndex = ceil(startMeanVal-(startFrame-1))
 end
-line([endMean endMean],ylim,'Color','k')
+line([startMeanVal startMeanVal],ylim,'Color','k')
+fprintf('Set end point for mean calculation by clicking in the plot.\n')
+while endMeanIndex < startMeanIndex
+    [endMeanVal,~] = ginput(1);
+    endMeanIndex = floor(endMeanVal-(startFrame-1))
+end
+line([endMeanVal endMeanVal],ylim,'Color','k')
 
-fprintf('Averaging over %d frames.\n',endMean-startMean+1)
-angularFreq = mean(angFreqs(startMean:endMean));
-stdAngFreq = std(angFreqs(startMean:endMean));
+fprintf('Averaging over %d frames.\n',endMeanIndex-startMeanIndex+1)
+angularFreq = mean(angFreqs(startMeanIndex:endMeanIndex));
+stdAngFreq = std(angFreqs(startMeanIndex:endMeanIndex));
 
 if ~isfinite(angularFreq)
     error('No finite angular frequency could be calculated.')
