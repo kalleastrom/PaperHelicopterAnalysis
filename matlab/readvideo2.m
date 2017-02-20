@@ -106,8 +106,7 @@ while hasFrame(v) && ctr <= endFrame
         line([p1(1) p2(1)], [p1(2) p2(2)])
         line([p1(1) p3(1)], [p1(2) p3(2)])
         %%%%%%%%
-        title(['Helicopter number ', num2str(i), '\n',...
-               'frame: ',num2str(ctr), ', t = ',...
+        title(['frame: ',num2str(ctr), ', t = ',...
                num2str(time),' s, relAngle: ',num2str(relAngle)])
         pause(0.01)
 %         pause
