@@ -55,7 +55,7 @@ rho_a = 1.293
  % Filling matrix A 
 for k = 1:11
 A(k, 1) = a(k)*b(k)*b(k)*sin(alpha(k))*(rho_a/2) * cos(alpha(k))*V(k)*V(k)  
-A(k, 2) = a(k)*b(k)*b(k)*sin(alpha(k))*(rho_a/2) * sin(alpha(k))*W(k)*W(k)*b(k)*b(k)/3
+A(k, 2) = -a(k)*b(k)*b(k)*sin(alpha(k))*(rho_a/2) * sin(alpha(k))*W(k)*W(k)*b(k)*b(k)/3
 B(k) = rho_a*W(k)*W(k)*(c(k)*(b(k)^4)/6 + L(k)*(d(k)^4)/96)
 end
  C = A\B % ingen ?r utel?mnad. 
@@ -106,11 +106,68 @@ end
 
 %%
 
-C_dd1 = constants2(:,1)
-C_dd2 = constants2(:,2)
+
 C_dr1 = constants1(:,1)
 C_dr2 = constants1(:,2)
+C_dm = 1
+
+C_dd1 = constants2(:,1)
+C_dd2 = constants2(:,2)
+format long 
+%%
+
+vy = (sqrt((2*rho_p.*b.*(a+c+L).*g./(rho_a.*a(k).*b(k).*(cos(alpha(k)).^2).*C_dd1(k)))./(1-C_dd2(k).*sin(alpha(k)).*(b(k).^2).*C_dr1(k)*rho_a.*a(k).*(b(k).^2).*sin(alpha(k)).*cos(alpha(k))./(C_dd1(k).*cos(alpha(k)).*(C_dr2(k).*rho_a.*a(k).*(b(k)^2).*sin(alpha(k)).*(b(k)^2)./2 + C_dm*rho_a.*(c(k)*(b(k).^4)./2+L(k)*(d(k).^4)./32))))))
+omega= sqrt(vy^2 * C_dr1(k)*rho_a.*a(k).*(b(k)^2)*sin(alpha(k)).*cos(alpha(k))./(C_dr2(k).*rho_a.*a(k).*(b(k).^2).*sin(alpha(k)).*(b(k).^(2/3)) + C_dm*rho_a.*(c(k)*(b(k).^4/3)) + L(k)*(d(k)^4)./48))
 
 
-vy = sqrt((2*rho_p*b*(a+c+L)*g/(rho_a*a*b*cos(alpha)^2.*C_dd1))/(1-C_dd2.*sin(alpha)*b^2*C_dr1*rho_a*a*b^2*sin(alpha)*cos(alpha)/(C_dd1*cos(alpha)*(C_dr2*rho_a*a*b^2*sin(alpha)*b^2/2 + C_dm*rho_a*(c*b^4/2+L*d^4/32)))));
-omega = sqrt(vy^2 * C_dr1*rho_a*a*b^2.*sin(alpha).*cos(alpha)./(C_dr2.*rho_a.*a.*(b.^2).*sin(alpha).*b^2/3 + C_dm*rho_a*(c*b^4/3 + L*d^4/48)));
+%%
+for k = 1:11
+vy(k) = sqrt((2*rho_p*b(k)*(a(k)+c(k)+L(k))*g/(rho_a*a(k)*b(k)*cos(alpha(k))^2*C_dd1(k)))/(1-C_dd2(k)*sin(alpha(k))*b(k)^2*C_dr1(k)*rho_a*a(k)*b(k)^2*sin(alpha(k))*cos(alpha(k))/(C_dd1(k)*cos(alpha(k))*(C_dr2(k)*rho_a*a(k)*b(k)^2*sin(alpha(k))*b(k)^2/2 + C_dm*rho_a*(c(k)*b(k)^4/2+L(k)*d(k)^4/32)))));
+omega(k) = sqrt(vy(k)^2 * C_dr1(k)*rho_a*a(k)*b(k)^2*sin(alpha(k))*cos(alpha(k))/(C_dr2(k)*rho_a*a(k)*b(k)^2*(sin(alpha(k))^2)*b(k)^2/3 + C_dm*rho_a*(c(k)*b(k)^4/3 + L(k)*d(k)^4/48))); 
+end
+
+
+%%
+for k = 1:11
+margin(k, :) = [(V(k) - vy(k))/V(k), (W(k) - omega(k))/W(k)];
+end
+
+
+%%
+
+for k=1:11
+vy(k) = (sqrt((2*rho_p*b(k)*(a(k)+c(k)+L(k))*g/(rho_a*a(k)*b(k)*(cos(alpha(k))^2)*C_dd1(k)))/(1-C_dd2(k)*sin(alpha(k))*(b(k)^2)*C_dr1(k)*rho_a.*a(k).*(b(k).^2).*sin(alpha(k)).*cos(alpha(k))./(C_dd1(k).*cos(alpha(k)).*(C_dr2(k).*rho_a.*a(k).*(b(k)^2).*sin(alpha(k)).*(b(k)^2)./2 + C_dm*rho_a.*(c(k)*(b(k).^4)./2+L(k)*(d(k).^4)./32))))));
+omega(k) = ((sqrt(vy.^2 * C_dr1(k).*rho_a.*a(k).*(b(k).^2).*sin(alpha(k)).*cos(alpha(k))./(C_dr2(k).*rho_a.*a(k).*(b(k).^2).*sin(alpha(k)).*(b(k).^2)./3)) + C_dm*rho_a.*(c(k)*(b(k).^4/3)) + L(k)*(d(k)^4)./48));
+end
+
+%%
+figure(2)
+%%
+V(5) = NaN
+vy(5) = NaN
+W(5) = NaN
+omega(5) = NaN
+%%
+figure(7)
+x = 1:11
+subplot(1,2,1)
+plot(x, V, '*')
+hold on
+plot(x, vy, 'o')
+grid on
+xlabel('Helicopter number')
+title('Measured and estimated velocity of fall')
+ylabel('Velocity (m/s)')
+legend('measured velocity', 'estimated velocity')
+set(gca, 'Fontsize', 15)
+subplot(1,2,2)
+plot(x, W, '*')
+hold on
+plot(x, omega, 'o')
+xlabel('Helicopter number')
+ylabel('Angular frequancy (rad/s)')
+title('Measured and estimated angular frequency')
+legend('measured angular freq.', 'estimated angular freq.')
+grid on
+set(gca, 'Fontsize', 15)
+
