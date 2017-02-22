@@ -5,7 +5,7 @@
 saveplot = true;
 
 % Specify folder for videos
-video_folder = '../../Filmer/Prototypes/';
+video_folder = '../../Filmer/';
 
 % Load geometry
 load('../data/prototypes.mat')
@@ -18,7 +18,7 @@ plotting = true; % Toggle plotting true/false
 angular_freq = zeros(1,11);
 freq_std = zeros(1,11);
 
-for i=1:11
+for i=6:11
     
     % Default parameters
     startFrame = 1;
